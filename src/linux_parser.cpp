@@ -80,7 +80,7 @@ long LinuxParser::SystemUpTime() {
     std::istringstream linestream(line);
     linestream >> uptime >> idle;
   }
-  return std::stol(uptime) + std::stol(idle);
+  return std::stol(uptime);
 }
 
 // TODO: Read and return the number of jiffies for the system
