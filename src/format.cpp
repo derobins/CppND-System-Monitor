@@ -23,15 +23,7 @@ string Format::ElapsedTime(long seconds)
 
     std::ostringstream sobj;
 
-    // Unclear at this time what should be done when hours has
-    // more than two digits. For now, just display XX.
-    if (hours > 99)
-        sobj << "XX:";
-    else {
-        if (hours < 10)
-            sobj << 0;
-        sobj << hours << ":";
-    }
+    sobj << hours << ":";
 
     if (minutes < 10)
         sobj << 0;
