@@ -67,7 +67,7 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
+// DER: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() {
   long total = -1;
   long available = -1;
@@ -122,8 +122,29 @@ long LinuxParser::ActiveJiffies() { return 0; }
 // TODO: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() { return 0; }
 
-// TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+// DER: Read and return CPU utilization
+// NOTE: Was a vector of type string.
+float LinuxParser::CpuUtilization() {
+  long user = -1;
+  long nice = -1;
+  long system = -1;
+  long idle = -1;
+
+  string line;
+  string key;
+  string value;
+  std::ifstream filestream(kProcDirectory + kStatFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::istringstream linestream(line);
+      linestream >> key;
+      if (key == "cpu") {
+        linestream >> user >> nice >> system >> idle;
+      }
+    }
+  }
+  return static_cast<float>(user + nice + system) / static_cast<float>(idle);
+}
 
 // DER: Read and return the total number of processes
 int LinuxParser::TotalProcesses() {
