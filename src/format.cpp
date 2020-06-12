@@ -23,6 +23,8 @@ string Format::ElapsedTime(long seconds)
 
     std::ostringstream sobj;
 
+    if (hours < 10)
+        sobj << 0;
     sobj << hours << ":";
 
     if (minutes < 10)
