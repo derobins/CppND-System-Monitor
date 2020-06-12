@@ -1,4 +1,5 @@
 #include <dirent.h>
+#include <pwd.h>
 #include <unistd.h>
 #include <string>
 #include <vector>
@@ -109,19 +110,6 @@ long LinuxParser::SystemUpTime() {
   return std::stol(uptime);
 }
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
-
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
-
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
-
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
-
 // DER: Read and return CPU utilization
 // NOTE: Was a vector of type string.
 float LinuxParser::CpuUtilization() {
@@ -192,14 +180,38 @@ string LinuxParser::Command(int pid[[maybe_unused]]) { return string(); }
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid[[maybe_unused]]) { return string(); }
 
-// TODO: Read and return the user ID associated with a process
+// DER: Read and return the user associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Uid(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::User(int pid[[maybe_unused]])
+{
+  // First, get the UID from the proc entry
+  string line;
+  string key;
+  string value;
+  int uid = -1;
 
-// TODO: Read and return the user associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid[[maybe_unused]]) { return string(); }
+  std::ifstream filestream(kProcDirectory + std::to_string(pid) + "/" + kStatusFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::istringstream linestream(line);
+      while (linestream >> key >> value) {
+        if (key == "Uid:") {
+          uid = std::stoi(value);
+        }
+      }
+    }
+  }
+
+  // Now get the username
+  struct passwd *pwd = getpwuid((uid_t)uid);
+
+  return string(pwd->pw_name);
+}
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ProcessUpTime(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::ProcessUpTime(int pid[[maybe_unused]]) { return -1; }
+
+// TODO: Read and return the CPU utilization of a a process.
+// REMOVE: [[maybe_unused]] once you define the function
+float LinuxParser::CpuUtilization(int pid[[maybe_unused]]) { return -1.0; }

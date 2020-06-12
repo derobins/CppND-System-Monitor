@@ -9,8 +9,8 @@
 
 class System {
  public:
-  Processor& Cpu();                   // TODO: See src/system.cpp
-  std::vector<Process>& Processes();  // TODO: See src/system.cpp
+  Processor& Cpu();                   // DER: See src/system.cpp
+  std::vector<Process>& Processes();  // DER: See src/system.cpp
   float MemoryUtilization();          // DER: See src/system.cpp
   long UpTime();                      // DER: See src/system.cpp
   int TotalProcesses();               // DER: See src/system.cpp
