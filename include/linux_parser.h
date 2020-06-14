@@ -45,7 +45,7 @@ float CpuUtilization();
 // Processes
 float CpuUtilization(int pid);
 std::string Command(int pid);
-std::string Ram(int pid);
+float Ram(int pid); // MB
 std::string User(int pid);
 long ProcessUpTime(int pid);
 
