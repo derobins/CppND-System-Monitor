@@ -1,5 +1,5 @@
-#include "linux_parser.h"
 #include "processor.h"
+#include "linux_parser.h"
 
 using namespace LinuxParser;
 

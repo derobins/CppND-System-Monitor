@@ -107,7 +107,7 @@ long LinuxParser::SystemUpTime() {
     std::istringstream linestream(line);
     linestream >> uptime >> idle;
   }
-  return std::stol(uptime);
+  return (long)std::stof(uptime);
 }
 
 // DER: Read and return CPU utilization
@@ -172,7 +172,7 @@ int LinuxParser::RunningProcesses() {
   return -1;
 }
 
-// TODO: Read and return the command associated with a process
+// DER: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Command(int pid) {
   string line = "";
@@ -185,7 +185,7 @@ string LinuxParser::Command(int pid) {
   return line;
 }
 
-// TODO: Read and return the memory used by a process
+// DER: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) {
   string line;
@@ -213,7 +213,7 @@ string LinuxParser::Ram(int pid) {
 
 // DER: Read and return the user associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid[[maybe_unused]])
+string LinuxParser::User(int pid)
 {
   // First, get the UID from the proc entry
   string line;
@@ -239,12 +239,11 @@ string LinuxParser::User(int pid[[maybe_unused]])
   return string(pwd->pw_name);
 }
 
-// TODO: Read and return the uptime of a process
+// DER: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::ProcessUpTime(int pid) {
   string line = "";
   vector<string> tokens;
-  long start_time;
 
   std::ifstream filestream(kProcDirectory + std::to_string(pid) + "/" + kStatFilename);
   if (filestream.is_open()) {
@@ -256,12 +255,15 @@ long LinuxParser::ProcessUpTime(int pid) {
     }
   }
 
-  start_time = std::stol(tokens[21]) / sysconf(_SC_CLK_TCK);
+  long start_time = std::stol(tokens[21]);
+  long uptime = LinuxParser::SystemUpTime(); /* So inefficient! */
 
-  return start_time;
+  long seconds = uptime - (start_time / sysconf(_SC_CLK_TCK));
+
+  return seconds;
 }
 
-// TODO: Read and return the CPU utilization of a a process.
+// DER: Read and return the CPU utilization of a a process.
 // REMOVE: [[maybe_unused]] once you define the function
 float LinuxParser::CpuUtilization(int pid) {
   string line = "";
@@ -279,14 +281,19 @@ float LinuxParser::CpuUtilization(int pid) {
 
   long utime = std::stol(tokens[13]);
   long stime = std::stol(tokens[14]);
-  long start_time = std::stol(tokens[21]);
+  long cutime = std::stol(tokens[15]);
+  long cstime = std::stol(tokens[16]);
+  long p_total_time = utime + stime + cutime + cstime;
+  p_total_time /= sysconf(_SC_CLK_TCK);
 
-  long total_time = utime + stime;
-  long uptime = LinuxParser::SystemUpTime(); /* So inefficient! */
+  long p_start_time = std::stol(tokens[21]);
+  p_start_time /= sysconf(_SC_CLK_TCK);
 
-  long seconds = uptime - (start_time / sysconf(_SC_CLK_TCK));
+  long s_uptime = LinuxParser::SystemUpTime(); /* So inefficient! */
 
-  float utilization = (total_time / sysconf(_SC_CLK_TCK)) / seconds;
+  long p_uptime = s_uptime - p_start_time;
+
+  float utilization = (float)p_total_time / (float)p_uptime;
 
   return utilization;
 }

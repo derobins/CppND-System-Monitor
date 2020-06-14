@@ -19,13 +19,11 @@ Process::Process(int pid) : pid_(pid) {}
 int Process::Pid() { return pid_; }
 
 // DER: Return this process's CPU utilization
-float Process::CpuUtilization()
-{
-    // Cache this for sorting
-    if (utilization_ < 0.0)
-        utilization_ = LinuxParser::CpuUtilization(pid_);
+float Process::CpuUtilization() {
+  // Cache this for sorting
+  utilization_ = LinuxParser::CpuUtilization(pid_);
 
-    return utilization_;
+  return utilization_;
 }
 
 // DER: Return the command that generated this process
@@ -42,4 +40,11 @@ long int Process::UpTime() { return LinuxParser::ProcessUpTime(pid_); }
 
 // DER: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a) const { return utilization_ < a.utilization_; }
+bool Process::operator<(Process const& a) const {
+  //return pid_ < a.pid_;
+  return utilization_ < a.utilization_;
+}
+bool Process::operator>(Process const& a) const {
+  //return pid_ > a.pid_;
+  return utilization_ > a.utilization_;
+}

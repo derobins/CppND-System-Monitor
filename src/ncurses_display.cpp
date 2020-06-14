@@ -55,12 +55,12 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
 void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
                                       WINDOW* window, int n) {
   int row{0};
-  int const pid_column{2}; // originally 2
-  int const user_column{9}; // originally 9
-  int const cpu_column{20}; // originally 16
-  int const ram_column{30}; // originally 26
-  int const time_column{39}; // originally 35
-  int const command_column{50}; // originally 46
+  int const pid_column{2};       // originally 2
+  int const user_column{9};      // originally 9
+  int const cpu_column{20};      // originally 16
+  int const ram_column{30};      // originally 26
+  int const time_column{39};     // originally 35
+  int const command_column{50};  // originally 46
   wattron(window, COLOR_PAIR(2));
   mvwprintw(window, ++row, pid_column, "PID");
   mvwprintw(window, row, user_column, "USER");
@@ -98,6 +98,9 @@ void NCursesDisplay::Display(System& system, int n) {
       newwin(3 + n, x_max - 1, system_window->_maxy + 1, 0);
 
   while (1) {
+    // If you don't erase the window content, you can get garbled output
+    werase(system_window);
+    werase(process_window);
     init_pair(1, COLOR_BLUE, COLOR_BLACK);
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     box(system_window, 0, 0);

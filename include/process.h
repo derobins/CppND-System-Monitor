@@ -11,14 +11,15 @@ class Process {
   Process() = delete;
   Process(int pid);
 
-  int Pid();                               // DER: See src/process.cpp
-  std::string User();                      // DER: See src/process.cpp
-  std::string Command();                   // DER: See src/process.cpp
-  float CpuUtilization();                  // DER: See src/process.cpp
-  std::string Ram();                       // DER: See src/process.cpp
-  long UpTime();                           // DER: See src/process.cpp
+  int Pid();               // DER: See src/process.cpp
+  std::string User();      // DER: See src/process.cpp
+  std::string Command();   // DER: See src/process.cpp
+  float CpuUtilization();  // DER: See src/process.cpp
+  std::string Ram();       // DER: See src/process.cpp
+  long UpTime();           // DER: See src/process.cpp
 
   bool operator<(Process const& a) const;  // DER: See src/process.cpp
+  bool operator>(Process const& a) const;  // DER: See src/process.cpp
 
   // DER: Declare any necessary private members
  private:
